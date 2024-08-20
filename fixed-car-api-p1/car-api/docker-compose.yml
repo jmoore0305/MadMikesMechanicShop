@@ -1,0 +1,8 @@
+version: "3"
+services:
+  car_management_rest_api:
+    build:
+      context: .
+      dockerfile: car_mgmt_api.Dockerfile
+    ports:
+      - "5000:5000"

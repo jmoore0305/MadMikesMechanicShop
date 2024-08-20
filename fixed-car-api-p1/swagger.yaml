@@ -1,0 +1,516 @@
+openapi: 3.0.0
+servers:
+  - description: Local API
+    url: http://127.0.0.1:5000
+info:
+  version: "1.0.0"
+  title: car-api
+  description: The REST API for Mad Mike's Car Management System
+paths:
+  '/parts/{part_number}':
+    get:
+      parameters:
+        - in: path
+          name: part_number
+          schema:
+            type: integer
+          required: true
+          description: Part number to lookup.
+      tags:
+        - Parts
+      description: "Get part price and delivery date by number."
+      summary: Get Part Info
+      operationId: getPartInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  worker:
+                    $ref: '#/components/schemas/PartInfoForPublic'
+  '/workers':
+    post:
+      tags:
+        - Worker
+      description: Create a worker object
+      summary: Create worker
+      operationId: createWorker
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorker'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  worker:
+                    $ref: '#/components/schemas/WorkerForPublic'
+    get:
+      tags:
+        - Worker
+      description: "List workers."
+      summary: List Workers
+      operationId: getWorkers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkerForPublic'
+  '/workers/{worker_id}':
+    get:
+      parameters:
+        - in: path
+          name: worker_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the worker object to fetch.
+      tags:
+        - Worker
+      description: "Get worker info."
+      summary: Get Worker Info
+      operationId: getWorker
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  worker:
+                    $ref: '#/components/schemas/WorkerForPublic'
+    patch:
+      parameters:
+        - in: path
+          name: worker_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the worker object to update.
+      tags:
+        - Worker
+      description: "Update worker info. Not including a field will leave it unchanged."
+      summary: Update Worker Info
+      operationId: updateWorker
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWorker'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  worker:
+                    $ref: '#/components/schemas/WorkerForPublic'
+    delete:
+      parameters:
+        - in: path
+          name: worker_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the worker object to delete.
+      tags:
+        - Worker
+      description: "Delete a worker object."
+      summary: Delete Worker
+      operationId: deleteWorker
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Successfully deleted worker!"
+  '/cars':
+    post:
+      tags:
+        - Car
+      description: Create a car object
+      summary: Create car
+      operationId: createCar
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCar'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  car:
+                    $ref: '#/components/schemas/CarForPublic'
+    get:
+      tags:
+        - Car
+      description: "List cars."
+      summary: List Cars
+      operationId: getCars
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cars:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CarForPublic'
+  '/cars/{car_id}':
+    get:
+      parameters:
+        - in: path
+          name: car_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the car object to fetch.
+      tags:
+        - Car
+      description: "Get car info."
+      summary: Get Car Info
+      operationId: getCar
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  car:
+                    $ref: '#/components/schemas/CarForPublic'
+    patch:
+      parameters:
+        - in: path
+          name: car_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the car object to update.
+      tags:
+        - Car
+      description: "Update car info. Not including a field will leave it unchanged."
+      summary: Update Car Info
+      operationId: updateCar
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCar'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  car:
+                    $ref: '#/components/schemas/CarForPublic'
+    delete:
+      parameters:
+        - in: path
+          name: car_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the car object to delete.
+      tags:
+        - Car
+      description: "Delete a car object."
+      summary: Delete Car
+      operationId: deleteCar
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Successfully deleted car!"
+  '/cars/{car_id}/workers':
+    post:
+      parameters:
+        - in: path
+          name: car_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the car object to assign a worker to.
+      tags:
+        - WorkerAssignment
+      description: Assign a worker to a car.
+      summary: Assign worker to car.
+      operationId: createWorkerAssignment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkerAssignment'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assignment:
+                    $ref: '#/components/schemas/WorkerAssignmentForPublic'
+    get:
+      parameters:
+        - in: path
+          name: car_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the car object to list the assigned workers of.
+      tags:
+        - WorkerAssignment
+      description: List workers assigned to car
+      summary: Get car assigned workers
+      operationId: getWorkerAssignmentByCarId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assignments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkerAssignmentForPublic'
+  '/workers/{worker_id}/cars':
+    get:
+      parameters:
+        - in: path
+          name: worker_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the worker object to list the assigned cars of.
+      tags:
+        - WorkerAssignment
+      description: List cars assigned to worker
+      summary: Get cars assigned to worker
+      operationId: getWorkerAssignmentByWorkerId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assignments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkerAssignmentForPublic'
+  '/cars/{car_id}/workers/{worker_id}':
+    post:
+      parameters:
+        - in: path
+          name: car_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the car object of the assignment.
+        - in: path
+          name: worker_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the worker object of the assignment.
+      tags:
+        - WorkerAssignment
+      description: Unassign a worker from a car.
+      summary: Unassign worker to car.
+      operationId: deleteWorkerAssignment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Successfully deleted car_assignment!"
+components:
+  schemas:
+    CreateCar:
+      type: object
+      required:
+        - vin
+        - plate_no
+        - state
+        - make
+        - model
+        - year
+        - owner_name
+        - owner_address
+        - owner_dl_number
+      properties:
+        vin:
+          type: string
+        plate_no:
+          type: string
+        state:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        year:
+          type: number
+          format: integer
+        owner_name:
+          type: string
+        owner_address:
+          type: string
+        owner_dl_number:
+          type: string
+    UpdateCar:
+      type: object
+      properties:
+        vin:
+          type: string
+        plate_no:
+          type: string
+        state:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        year:
+          type: number
+          format: integer
+        owner_name:
+          type: string
+        owner_address:
+          type: string
+        owner_dl_number:
+          type: string
+        checkin_at:
+          type: string
+          format: date-time
+        checkout_at:
+          type: string
+          format: date-time
+    CarForPublic:
+      type: object
+      properties:
+        id:
+          type: number
+          format: integer
+        plate_no:
+          type: string
+        state:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        year:
+          type: number
+          format: integer
+        owner_name:
+          type: string
+        owner_address:
+          type: string
+        owner_dl_number:
+          type: string
+        checkin_at:
+          type: string
+          format: date-time
+        checkout_at:
+          type: string
+          format: date-time
+    CreateWorker:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    UpdateWorker:
+      type: object
+      properties:
+        name:
+          type: string
+    WorkerForPublic:
+      type: object
+      properties:
+        id:
+          type: number
+          format: integer
+        name:
+          type: string
+    CreateWorkerAssignment:
+      type: object
+      properties:
+        worker_id:
+          type: number
+          format: integer
+    WorkerAssignmentForPublic:
+      type: object
+      properties:
+        car_id:
+          type: number
+          format: integer
+        worker_id:
+          type: number
+          format: integer
+    PartInfoForPublic:
+      type: object
+      properties:
+        part_no:
+          type: string
+          description: "Part number."
+        delivery_date:
+          type: string
+          description: "Date in format YYYY/MM/DD"
+          example: "2023/08/16"
+        price:
+          type: number
+          description: "Price in dollars."
+          example: 216.12
